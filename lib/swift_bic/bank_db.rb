@@ -26,6 +26,18 @@ module SwiftBic
       end
     end
 
+    def validate_bic bic
+      begin
+        db = SQLite3::Database.open(File.expand_path("../../../db/blz.db", __FILE__))
+        row = db.execute("SELECT * FROM blz WHERE Bic = '#{bic}'")
+      rescue SQLite3::Exception => e
+        throw e
+      ensure
+        db.close
+      end
+      row.present?
+    end
+
     private
 
     def load_table_row bank_code
